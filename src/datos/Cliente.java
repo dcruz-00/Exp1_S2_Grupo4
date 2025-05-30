@@ -26,7 +26,13 @@ public class Cliente {
         this.domicilio = domicilio;
         this.comuna = comuna;
         this.telefono = telefono;
-        //this.cuenta = cuenta;
+        if (cuenta instanceof CuentaCorriente) {
+            this.cuentaCorriente = (CuentaCorriente) cuenta;
+        } else if (cuenta instanceof CuentaAhorro) {
+            this.cuentaAhorro = (CuentaAhorro) cuenta;
+        } else if (cuenta instanceof CuentaCredito) {
+            this.cuentaCredito = (CuentaCredito) cuenta;
+        }
     }
 
 // Getters y Setters
@@ -61,11 +67,11 @@ public class Cliente {
     public CuentaBancaria getCuentaCorriente() {
         return cuentaCorriente;
     }
-    
+
     public CuentaAhorro getCuentaAhorro() {
         return cuentaAhorro;
     }
-    
+
     public CuentaCredito getCuentaCredito() {
         return cuentaCredito;
     }
@@ -101,14 +107,15 @@ public class Cliente {
     public void setCuentaCorriente(CuentaCorriente cuentaCorriente) {
         this.cuentaCorriente = cuentaCorriente;
     }
-    
+
     public void setCuentaAhorro(CuentaAhorro cuentaAhorro) {
         this.cuentaAhorro = cuentaAhorro;
     }
-    
+
     public void setCuentaCredito(CuentaCredito cuentaCredito) {
         this.cuentaCredito = cuentaCredito;
     }
+
     public void mostrarDatos() {
         System.out.println("--------------------------------");
         System.out.println("RUT: " + rut);
@@ -118,19 +125,19 @@ public class Cliente {
         System.out.println("Domicilio: " + domicilio);
         System.out.println("Comuna: " + comuna);
         System.out.println("Teléfono: " + telefono);
-        
+
         if (cuentaCorriente != null) {
             System.out.println("\n>> Cuenta Corriente:");
             System.out.println("Número de Cuenta: " + cuentaCorriente.getNumeroCuenta());
             System.out.println("Saldo: $" + cuentaCorriente.getSaldo());
         }
-        
+
         if (cuentaAhorro != null) {
             System.out.println("\n>> Cuenta de Ahorro:");
             System.out.println("Número de cuenta: " + cuentaAhorro.getNumeroCuenta());
             System.out.println("Saldo: $" + cuentaAhorro.getSaldo());
         }
-        
+
         if (cuentaCredito != null) {
             System.out.println("\n>> Cuenta de Crédito:");
             System.out.println("Número de cuenta: " + cuentaCredito.getNumeroCuenta());

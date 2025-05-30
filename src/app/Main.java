@@ -8,6 +8,7 @@ import datos.CuentaCredito;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern; //añadí regex pattern
 
 public class Main {
 
@@ -74,13 +75,23 @@ public class Main {
         String rut, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna;
         int telefono, numeroCuenta = 0;
 
+        Pattern PATRON_RUT = Pattern.compile("^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9Kk]$");
+
         do {
-            System.out.println("\nPor favor ingrese su RUT considerando puntos y guión (X.XXX.XXX-X)): ");
+            System.out.println("\nPor favor ingrese su RUT considerando puntos y guion (xX.XXX.XXX-X)): ");
             rut = scanner.nextLine();
             if (rut.length() < 11 || rut.length() > 12) {
-                System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres (X.XXX.XXX-X).");
+                System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres (xX.XXX.XXX-X).");
             }
-        } while (rut.length() < 11 || rut.length() > 12);
+
+            if (!PATRON_RUT.matcher(rut).matches()) {
+                System.out.println("Formato inválido. Por favor intente otra vez.");
+            }
+            
+            if (verificarRut(rut))
+                System.out.println("El rut que ingresó ya se encuentra registrado. Por favor intente otra vez.");
+
+        } while ((rut.length() < 11 || rut.length() > 12) || (!PATRON_RUT.matcher(rut).matches()) || (verificarRut(rut)));
 
         nombre = validarYCapitalizar("\nIngrese su nombre:");
         apellidoPaterno = validarYCapitalizar("\nIngrese su apellido paterno:");
@@ -105,27 +116,75 @@ public class Main {
             }
         }
 
+        //moví CuentaBancaria cuenta = null; a línea 136 por orden
+        //borré el int opcionMenublablabla no iba acá
+        int numeroCuentaCorriente = 0;
+        int numeroCuentaAhorro = 0;
+        int numeroCuentaCredito = 0;
+
+        System.out.println("Por favor, elija el tipo de cuenta que desea: ");
+        System.out.println("1. Cuenta Corriente");
+        System.out.println("2. Cuenta Ahorro");
+        System.out.println("3. Cuenta Credito");
+        System.out.println("4. Salir");
+
+        int opcionMenuCuenta = scanner.nextInt();
+        scanner.nextLine();
+
+        while (opcionMenuCuenta < 1 || opcionMenuCuenta > 4) {
+            System.out.println("Opción Inválida. Ingrese un número entre 1 y 4:");
+
+            while (!scanner.hasNextInt()) {
+                System.out.println("Entrada no válida. Ingrese un número entre 1 y 4:");
+                scanner.next();
+            }
+            opcionMenuCuenta = scanner.nextInt();
+            scanner.nextLine();
+        }
+
+        String opcion;
         CuentaBancaria cuenta = null;
-        System.out.println("\nIngrese su número de cuenta para su CUENTA CORRIENTE (9 dígitos):");
-        int numeroCuentaCorriente = Integer.parseInt(scanner.nextLine());
 
-        System.out.println("\nIngrese su número de cuenta para su CUENTA DE AHORRO (9 dígitos):");
-        int numeroCuentaAhorro = Integer.parseInt(scanner.nextLine());
+        switch (opcionMenuCuenta) {
 
-        System.out.println("\nIngrese su número de cuenta para su CUENTA DE CRÉDITO (9 dígitos)");
-        int numeroCuentaCredito = Integer.parseInt(scanner.nextLine());
+            case 1 -> {
+                do {
+                    System.out.println("Ingrese su numero de Cuenta de Corriente. (9 digitos): ");
+                    opcion = scanner.nextLine();
+                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                numeroCuentaCorriente = Integer.parseInt(opcion);
+                cuenta = new CuentaCorriente(numeroCuentaCorriente, 0);
+            }
+            case 2 -> {
+                do {
+                    System.out.println("Ingrese su numero de Cuenta de Ahorro. (9 digitos): ");
+                    opcion = scanner.nextLine();
+                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                numeroCuentaAhorro = Integer.parseInt(opcion);
+                cuenta = new CuentaAhorro(numeroCuentaAhorro, 0);
+            }
+            case 3 -> {
+                do {
+                    System.out.println("Ingrese su numero de Cuenta de Credito. (9 digitos): ");
+                    opcion = scanner.nextLine();
+                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                numeroCuentaCredito = Integer.parseInt(opcion);
+                cuenta = new CuentaCredito(numeroCuentaCredito, 0);
+            }
+            case 4 -> {
+                System.out.println("Saliendo...");
+                return;
+            }
+            default ->
+                System.out.println("Opcion invalida. Intente nuevamente.");
+        }
 
         Cliente nuevoCliente = new Cliente(rut, nombre, apellidoMaterno, apellidoPaterno, domicilio, comuna, telefono, cuenta);
 
-        // * Asignar las cuentas bancarias
-        nuevoCliente.setCuentaCorriente(new CuentaCorriente(numeroCuentaCorriente, 0));
-        nuevoCliente.setCuentaAhorro(new CuentaAhorro(numeroCuentaAhorro, 0));
-        nuevoCliente.setCuentaCredito(new CuentaCredito(numeroCuentaCredito, 0));
-
-        // * Agregar cliente a la lista
         clientes.add(nuevoCliente);
 
         System.out.println("\nCliente registrado exitosamente!");
+
     }
 
     private void mostrarDatosCliente() {
@@ -155,7 +214,7 @@ public class Main {
             System.out.println("\nSeleccione la cuenta a la que desea depositar:");
             System.out.println("1) Cuenta Corriente");
             System.out.println("2) Cuenta Ahorro");
-            System.out.println("3) Cuenta Crédito");
+            System.out.println("3) Cuenta Credito");
             String opcion = scanner.nextLine();
 
             switch (opcion) {
@@ -173,7 +232,7 @@ public class Main {
                             System.out.println("ERROR: " + e.getMessage());
                         }
                     } else {
-                        System.out.println("El cliente no tiene una CUENTA CORRIENTE registrada.");
+                        System.out.println("El cliente no tiene una cuenta corriente registrada.");
                     }
                     break;
 
@@ -191,7 +250,7 @@ public class Main {
                             System.out.println("ERROR: " + e.getMessage());
                         }
                     } else {
-                        System.out.println("El cliente no tiene una CUENTA DE AHORRO registrada.");
+                        System.out.println("El cliente no tiene una cuenta de ahorro registrada.");
                     }
                     break;
 
@@ -204,17 +263,17 @@ public class Main {
 
                         try {
                             cliente.getCuentaCredito().depositar(montoDCuentaCredito);
-                            System.out.println("Depósito exitoso. Nuevo saldo: $" + cliente.getCuentaCredito().getSaldo());
+                            System.out.println("Deposito exitoso. Nuevo saldo: $" + cliente.getCuentaCredito().getSaldo());
                         } catch (IllegalArgumentException e) {
                             System.out.println("ERROR: " + e.getMessage());
                         }
                     } else {
-                        System.out.println("El cliente no tiene una CUENTA DE CRÉDITO registrada.");
+                        System.out.println("El cliente no tiene una cuenta de credito registrada.");
                     }
                     break;
 
                 default:
-                    System.out.println("Opción inválida.");
+                    System.out.println("Opcion invalida.");
             }
 
         } else {
@@ -291,11 +350,11 @@ public class Main {
                             System.out.println("ERROR: " + e.getMessage());
                         }
                     } else {
-                        System.out.println("El cliente no tiene una cuenta de crédito.");
+                        System.out.println("El cliente no tiene una cuenta de credito.");
                     }
                     break;
                 default:
-                    System.out.println("Opción inválida.");
+                    System.out.println("Opcion invalida.");
             }
         } else {
             System.out.println("Cliente no encontrado.");
@@ -313,36 +372,36 @@ public class Main {
             System.out.println("Seleccione la cuenta que desea consultar:");
             System.out.println("1) Cuenta Corriente");
             System.out.println("2) Cuenta Ahorro");
-            System.out.println("3) Cuenta Crédito");
+            System.out.println("3) Cuenta Credito");
             String opcion = scanner.nextLine();
-            
+
             switch (opcion) {
                 case "1":
                     if (cliente.getCuentaCorriente() != null) {
-                        System.out.println("Saldo de CUENTA CORRIENTE: $" + cliente.getCuentaCorriente().getSaldo());
+                        System.out.println("Saldo de Cuenta Corriente: $" + cliente.getCuentaCorriente().getSaldo());
                     } else {
-                        System.out.println("El cliente no tiene una CUENTA CORRIENTE registrada.");
+                        System.out.println("El cliente no tiene una cuenta corriente registrada.");
                     }
                     break;
-                    
+
                 case "2":
-                if (cliente.getCuentaAhorro() != null) {
-                    System.out.println("Saldo de CUENTA DE AHORRO: $" + cliente.getCuentaAhorro().getSaldo());
-                } else {
-                    System.out.println("El cliente no tiene una CUENTA DE AHORRO registrada.");
-                }
-                break;
-                
+                    if (cliente.getCuentaAhorro() != null) {
+                        System.out.println("Saldo de Cuenta de Ahorro: $" + cliente.getCuentaAhorro().getSaldo());
+                    } else {
+                        System.out.println("El cliente no tiene una cuenta de ahorro registrada.");
+                    }
+                    break;
+
                 case "3":
                     if (cliente.getCuentaCredito() != null) {
-                        System.out.println("Saldo de CUENTA DE CRÉDITO: $" + cliente.getCuentaCredito().getSaldo());
+                        System.out.println("Saldo de Cuenta de Credito: $" + cliente.getCuentaCredito().getSaldo());
                     } else {
-                        System.out.println("El cliente no tiene una CUENTA DE CRÉDITO registrada.");
+                        System.out.println("El cliente no tiene una cuenta de credito registrada.");
                     }
                     break;
-                    
+
                 default:
-                    System.out.println("Opción Inválida.");
+                    System.out.println("Opcion Invalida.");
             }
         } else {
             System.out.println("Cliente no encontrado.");
@@ -370,5 +429,14 @@ public class Main {
                 System.out.println("Entrada invalida. Solo se permiten letras. Intente nuevamente.");
             }
         }
+    }
+
+    private boolean verificarRut(String rut) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getRut().equalsIgnoreCase(rut)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
