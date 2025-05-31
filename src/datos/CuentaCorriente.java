@@ -1,6 +1,6 @@
 package datos;
 
-public class CuentaCorriente extends CuentaBancaria implements Operaciones {
+public class CuentaCorriente extends CuentaBancaria implements MostrarInfo {
 
     private int saldo;
 
@@ -33,4 +33,12 @@ public class CuentaCorriente extends CuentaBancaria implements Operaciones {
     return saldo;
     }
 
+    @Override
+    public void mostrarDatos(){
+          System.out.println("\n>> Cuenta Corriente:");
+            System.out.println("Número de Cuenta: " + getNumeroCuenta());
+            System.out.println("Saldo: $" + getSaldo());
+        
+    }
+    
 }

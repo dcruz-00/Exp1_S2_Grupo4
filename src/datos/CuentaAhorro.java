@@ -1,6 +1,6 @@
 package datos;
 
-public class CuentaAhorro extends CuentaBancaria implements Operaciones {
+public class CuentaAhorro extends CuentaBancaria implements MostrarInfo {
 
     private int saldo;
 
@@ -33,4 +33,12 @@ public class CuentaAhorro extends CuentaBancaria implements Operaciones {
     public int getSaldo() {
         return saldo;
     }
+    
+    
+    @Override
+    public void mostrarDatos(){
+     
+        
+    }
+       
 }

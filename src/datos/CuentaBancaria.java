@@ -2,15 +2,22 @@ package datos;
 
 public abstract class CuentaBancaria {
 
-    final private int numeroCuenta;
-    final private String rutCliente;
+    private int numeroCuenta;
+    private String rutCliente;
 
     public CuentaBancaria(int numeroCuenta, String rutCliente) {
         this.numeroCuenta = numeroCuenta;
         this.rutCliente = rutCliente;
     }
 
- 
+    public CuentaBancaria(int numeroCuenta) {
+        this.numeroCuenta = numeroCuenta;
+    }
+
+    public CuentaBancaria(String rutCliente) {
+        this.rutCliente = rutCliente;
+    }
+
     public int getNumeroCuenta() {
         return numeroCuenta;        
     }

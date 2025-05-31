@@ -13,9 +13,9 @@ public class Cliente {
     //private CuentaBancaria cuenta;
 
     // * 
-    private CuentaCorriente cuentaCorriente;
-    private CuentaAhorro cuentaAhorro;
-    private CuentaCredito cuentaCredito;
+    public CuentaCorriente cuentaCorriente;
+    public CuentaAhorro cuentaAhorro;
+    public CuentaCredito cuentaCredito;
 
 // Constructor
     public Cliente(String rut, String nombre, String apellidoMaterno, String apellidoPaterno, String domicilio, String comuna, int telefono, CuentaBancaria cuenta) {
@@ -125,24 +125,6 @@ public class Cliente {
         System.out.println("Domicilio: " + domicilio);
         System.out.println("Comuna: " + comuna);
         System.out.println("Teléfono: " + telefono);
-
-        if (cuentaCorriente != null) {
-            System.out.println("\n>> Cuenta Corriente:");
-            System.out.println("Número de Cuenta: " + cuentaCorriente.getNumeroCuenta());
-            System.out.println("Saldo: $" + cuentaCorriente.getSaldo());
-        }
-
-        if (cuentaAhorro != null) {
-            System.out.println("\n>> Cuenta de Ahorro:");
-            System.out.println("Número de cuenta: " + cuentaAhorro.getNumeroCuenta());
-            System.out.println("Saldo: $" + cuentaAhorro.getSaldo());
-        }
-
-        if (cuentaCredito != null) {
-            System.out.println("\n>> Cuenta de Crédito:");
-            System.out.println("Número de cuenta: " + cuentaCredito.getNumeroCuenta());
-            System.out.println("Saldo: $" + cuentaCredito.getSaldo());
-        }
         System.out.println("--------------------------------");
     }
 }
