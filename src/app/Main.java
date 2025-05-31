@@ -73,7 +73,7 @@ public class Main {
         System.out.println("== REGISTRAR CLIENTE ==");
 
         String rut, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna;
-        int telefono, numeroCuenta = 0;
+        int telefono; // * Eliminé numeroCuenta porque era innecesario
 
         Pattern PATRON_RUT = Pattern.compile("^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9Kk]$");
 
@@ -87,9 +87,10 @@ public class Main {
             if (!PATRON_RUT.matcher(rut).matches()) {
                 System.out.println("Formato inválido. Por favor intente otra vez.");
             }
-            
-            if (verificarRut(rut))
+
+            if (verificarRut(rut)) {
                 System.out.println("El rut que ingresó ya se encuentra registrado. Por favor intente otra vez.");
+            }
 
         } while ((rut.length() < 11 || rut.length() > 12) || (!PATRON_RUT.matcher(rut).matches()) || (verificarRut(rut)));
 
@@ -116,74 +117,111 @@ public class Main {
             }
         }
 
-        //moví CuentaBancaria cuenta = null; a línea 136 por orden
-        //borré el int opcionMenublablabla no iba acá
+        //moví CuentaBancaria cuenta = null; a línea 136 por orden | :3
+        //borré el int opcionMenublablabla no iba acá | :D        
         int numeroCuentaCorriente = 0;
         int numeroCuentaAhorro = 0;
         int numeroCuentaCredito = 0;
 
-        System.out.println("Por favor, elija el tipo de cuenta que desea: ");
-        System.out.println("1. Cuenta Corriente");
-        System.out.println("2. Cuenta Ahorro");
-        System.out.println("3. Cuenta Credito");
-        System.out.println("4. Salir");
+        // * Las inicialicé como null
+        CuentaCorriente cuentaCorriente = null;
+        CuentaAhorro cuentaAhorro = null;
+        CuentaCredito cuentaCredito = null;
 
-        int opcionMenuCuenta = scanner.nextInt();
-        scanner.nextLine();
+        // * Creamos cliente sin cuentas inicialmente
+        Cliente nuevoCliente = new Cliente(rut, nombre, apellidoMaterno, apellidoPaterno, domicilio, comuna, telefono, null);
 
-        while (opcionMenuCuenta < 1 || opcionMenuCuenta > 4) {
-            System.out.println("Opción Inválida. Ingrese un número entre 1 y 4:");
+        // * Variable para conitnuar el regitro
+        boolean continuarRegistro = true;
 
-            while (!scanner.hasNextInt()) {
-                System.out.println("Entrada no válida. Ingrese un número entre 1 y 4:");
-                scanner.next();
-            }
-            opcionMenuCuenta = scanner.nextInt();
+        while (continuarRegistro) {
+            System.out.println("\nPor favor, elija el tipo de cuenta que desea: ");
+            System.out.println("1. Cuenta Corriente");
+            System.out.println("2. Cuenta Ahorro");
+            System.out.println("3. Cuenta Credito");
+            System.out.println("4. Salir");
+
+            int opcionMenuCuenta = scanner.nextInt();
             scanner.nextLine();
+
+            while (opcionMenuCuenta < 1 || opcionMenuCuenta > 4) {
+                System.out.println("Opción Inválida. Ingrese un número entre 1 y 4:");
+
+                while (!scanner.hasNextInt()) {
+                    System.out.println("Entrada no válida. Ingrese un número entre 1 y 4:");
+                    scanner.next();
+                }
+                opcionMenuCuenta = scanner.nextInt();
+                scanner.nextLine();
+            }
+
+            String opcion;
+            CuentaBancaria cuenta = null;
+
+            switch (opcionMenuCuenta) {
+
+                case 1 -> {
+                    do {
+                        System.out.println("\nIngrese su numero de Cuenta de Corriente. (9 digitos): ");
+                        opcion = scanner.nextLine();
+                    } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                    numeroCuentaCorriente = Integer.parseInt(opcion);
+                    cuentaCorriente = new CuentaCorriente(numeroCuentaCorriente, 0);
+                    nuevoCliente.setCuentaCorriente(cuentaCorriente); // * Agregamos la cuenta a cliente
+                }
+                case 2 -> {
+                    do {
+                        System.out.println("\nIngrese su numero de Cuenta de Ahorro. (9 digitos): ");
+                        opcion = scanner.nextLine();
+                    } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                    numeroCuentaAhorro = Integer.parseInt(opcion);
+                    cuentaAhorro = new CuentaAhorro(numeroCuentaAhorro, 0);
+                    nuevoCliente.setCuentaAhorro(cuentaAhorro); // * Agregado
+                }
+                case 3 -> {
+                    do {
+                        System.out.println("\nIngrese su numero de Cuenta de Credito. (9 digitos): ");
+                        opcion = scanner.nextLine();
+                    } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
+                    numeroCuentaCredito = Integer.parseInt(opcion);
+                    cuentaCredito = new CuentaCredito(numeroCuentaCredito, 0);
+                    nuevoCliente.setCuentaCredito(cuentaCredito); // * Agregadoo
+                }
+                case 4 -> {
+                    System.out.println("Saliendo...");
+                    return;
+                }
+                default ->
+                    System.out.println("Opcion invalida. Intente nuevamente.");
+            }
+
+            // * Pregunta para continuar registrando cuentas
+            String continuar;
+            do {
+            System.out.println("\n¿Desea registrar otro tipo de cuenta? (s/n)");
+            continuar = scanner.nextLine().trim().toLowerCase();
+            
+            if (!continuar.equals("s") && !continuar.equals("n")) {
+                System.out.println("Entrada inválida. Por favor ingrese 's' para SÍ o 'n' para NO");   
+            }
+            } while (!continuar.equals("s") && !continuar.equals("n"));
+            
+            if (continuar.equals("n")) {
+                continuarRegistro = false;
+            }
         }
 
-        String opcion;
-        CuentaBancaria cuenta = null;
-
-        switch (opcionMenuCuenta) {
-
-            case 1 -> {
-                do {
-                    System.out.println("Ingrese su numero de Cuenta de Corriente. (9 digitos): ");
-                    opcion = scanner.nextLine();
-                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
-                numeroCuentaCorriente = Integer.parseInt(opcion);
-                cuenta = new CuentaCorriente(numeroCuentaCorriente, 0);
-            }
-            case 2 -> {
-                do {
-                    System.out.println("Ingrese su numero de Cuenta de Ahorro. (9 digitos): ");
-                    opcion = scanner.nextLine();
-                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
-                numeroCuentaAhorro = Integer.parseInt(opcion);
-                cuenta = new CuentaAhorro(numeroCuentaAhorro, 0);
-            }
-            case 3 -> {
-                do {
-                    System.out.println("Ingrese su numero de Cuenta de Credito. (9 digitos): ");
-                    opcion = scanner.nextLine();
-                } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
-                numeroCuentaCredito = Integer.parseInt(opcion);
-                cuenta = new CuentaCredito(numeroCuentaCredito, 0);
-            }
-            case 4 -> {
-                System.out.println("Saliendo...");
-                return;
-            }
-            default ->
-                System.out.println("Opcion invalida. Intente nuevamente.");
+        // * Agregar cliente a la lista solo después de registrar al menos una cuenta
+        if (nuevoCliente.getCuentaCorriente() != null || nuevoCliente.getCuentaAhorro() != null || nuevoCliente.getCuentaCredito() != null) {
+            clientes.add(nuevoCliente);
+            System.out.println("\nCliente registrado exitosamente con sus cuentas.");
+        } else {
+            System.out.println("No se registró ninguna cuenta. Cliente no agregado.");
         }
-
-        Cliente nuevoCliente = new Cliente(rut, nombre, apellidoMaterno, apellidoPaterno, domicilio, comuna, telefono, cuenta);
 
         clientes.add(nuevoCliente);
 
-        System.out.println("\nCliente registrado exitosamente!");
+        System.out.println("\nCliente ha sido registrado exitosamente!");
 
     }
 
