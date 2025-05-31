@@ -4,28 +4,28 @@ public class CuentaCorriente extends CuentaBancaria implements Operaciones {
 
     private int saldo;
 
-    public CuentaCorriente(int numeroCuenta, int saldoInicial) {
-        super(numeroCuenta);
-        this.saldo = saldoInicial;
+    public CuentaCorriente(int saldo, int numeroCuenta, String rutCliente) {
+        super(numeroCuenta, rutCliente);
+        this.saldo = saldo;
     }
 
     @Override
-    public void girar(int monto) {
-        if (monto <= 0) {
-            throw new IllegalArgumentException("Monto inválido: debe ser mayor que cero.");
+    public void girar(int montoGiroCorriente) {
+        if (montoGiroCorriente <= 0) {
+            throw new IllegalArgumentException("CUENTA CORRIENTE: Monto inválido: debe ser mayor que cero.");
         }
-        if (monto > saldo) {
-            throw new IllegalArgumentException("Saldo insuficiente.");
+        if (montoGiroCorriente > saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente en su Cuenta Corriente.");
         }
-        saldo -= monto;
+        saldo -= montoGiroCorriente;
     }
 
     @Override
-    public void depositar(int monto) {
-        if (monto <= 0) {
-            throw new IllegalArgumentException("Monto inválido: debe ser mayor que cero.");
+    public void depositar(int montoDepositoCorriente) {
+        if (montoDepositoCorriente <= 0) {
+            throw new IllegalArgumentException("CUENTA CORRIENTE: Monto inválido: debe ser mayor que cero.");
         }
-        saldo += monto;
+        saldo += montoDepositoCorriente;
     }
     
     @Override

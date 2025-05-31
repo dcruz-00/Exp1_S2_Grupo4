@@ -4,28 +4,28 @@ public class CuentaCredito extends CuentaBancaria implements Operaciones {
 
     private int saldo;
 
-    public CuentaCredito(int numeroCuenta, int saldoInicial) {
-        super(numeroCuenta);
-        this.saldo = saldoInicial;
+    public CuentaCredito(int saldo, int numeroCuenta, String rutCliente) {
+        super(numeroCuenta, rutCliente);
+        this.saldo = saldo;
     }
 
     @Override
-    public void girar(int monto) {
-        if (monto <= 0) {
-            throw new IllegalArgumentException("Monto inválido: debe ser mayor que cero.");
+    public void girar(int montoGiroCredito) {
+        if (montoGiroCredito <= 0) {
+            throw new IllegalArgumentException("CUENTA CREDITO: Monto inválido: debe ser mayor que cero.");
         }
-        if (monto > saldo) {
-            throw new IllegalArgumentException("Saldo insuficiente.");
+        if (montoGiroCredito > saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente en su Cuenta Credito.");
         }
-        saldo -= monto;
+        saldo -= montoGiroCredito;
     }
 
     @Override
-    public void depositar(int monto) {
-        if (monto <= 0) {
-            throw new IllegalArgumentException("Monto inválido: debe ser mayor que cero.");
+    public void depositar(int montoDepositoCredito) {
+        if (montoDepositoCredito <= 0) {
+            throw new IllegalArgumentException("CUENTA CREDITO: Monto inválido: debe ser mayor que cero.");
         }
-        saldo += monto;
+        saldo += montoDepositoCredito;
     }
 
     @Override

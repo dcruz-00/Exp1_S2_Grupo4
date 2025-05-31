@@ -8,7 +8,7 @@ import datos.CuentaCredito;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern; //añadí regex pattern
+import java.util.regex.Pattern; 
 
 public class Main {
 
@@ -72,27 +72,28 @@ public class Main {
         System.out.println("--------------------------------");
         System.out.println("== REGISTRAR CLIENTE ==");
 
-        String rut, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna;
-        int telefono; // * Eliminé numeroCuenta porque era innecesario
+        
+        String rutCliente, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna;
+        int telefono; 
 
         Pattern PATRON_RUT = Pattern.compile("^[0-9]{1,2}\\.[0-9]{3}\\.[0-9]{3}-[0-9Kk]$");
 
         do {
             System.out.println("\nPor favor ingrese su RUT considerando puntos y guion (xX.XXX.XXX-X)): ");
-            rut = scanner.nextLine();
-            if (rut.length() < 11 || rut.length() > 12) {
+            rutCliente = scanner.nextLine();
+            if (rutCliente.length() < 11 || rutCliente.length() > 12) {
                 System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres (xX.XXX.XXX-X).");
             }
 
-            if (!PATRON_RUT.matcher(rut).matches()) {
+            if (!PATRON_RUT.matcher(rutCliente).matches()) {
                 System.out.println("Formato inválido. Por favor intente otra vez.");
             }
 
-            if (verificarRut(rut)) {
+            if (verificarRut(rutCliente)) {
                 System.out.println("El rut que ingresó ya se encuentra registrado. Por favor intente otra vez.");
             }
 
-        } while ((rut.length() < 11 || rut.length() > 12) || (!PATRON_RUT.matcher(rut).matches()) || (verificarRut(rut)));
+        } while ((rutCliente.length() < 11 || rutCliente.length() > 12) || (!PATRON_RUT.matcher(rutCliente).matches()) || (verificarRut(rutCliente)));
 
         nombre = validarYCapitalizar("\nIngrese su nombre:");
         apellidoPaterno = validarYCapitalizar("\nIngrese su apellido paterno:");
@@ -117,21 +118,16 @@ public class Main {
             }
         }
 
-        //moví CuentaBancaria cuenta = null; a línea 136 por orden | :3
-        //borré el int opcionMenublablabla no iba acá | :D        
         int numeroCuentaCorriente = 0;
         int numeroCuentaAhorro = 0;
         int numeroCuentaCredito = 0;
 
-        // * Las inicialicé como null
         CuentaCorriente cuentaCorriente = null;
         CuentaAhorro cuentaAhorro = null;
         CuentaCredito cuentaCredito = null;
 
-        // * Creamos cliente sin cuentas inicialmente
-        Cliente nuevoCliente = new Cliente(rut, nombre, apellidoMaterno, apellidoPaterno, domicilio, comuna, telefono, null);
+        Cliente nuevoCliente = new Cliente(rutCliente, nombre, apellidoMaterno, apellidoPaterno, domicilio, comuna, telefono, null);
 
-        // * Variable para conitnuar el regitro
         boolean continuarRegistro = true;
 
         while (continuarRegistro) {
@@ -166,7 +162,7 @@ public class Main {
                         opcion = scanner.nextLine();
                     } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
                     numeroCuentaCorriente = Integer.parseInt(opcion);
-                    cuentaCorriente = new CuentaCorriente(numeroCuentaCorriente, 0);
+                    cuentaCorriente = new CuentaCorriente( 0, numeroCuentaCorriente, null);
                     nuevoCliente.setCuentaCorriente(cuentaCorriente); // * Agregamos la cuenta a cliente
                 }
                 case 2 -> {
@@ -175,7 +171,7 @@ public class Main {
                         opcion = scanner.nextLine();
                     } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
                     numeroCuentaAhorro = Integer.parseInt(opcion);
-                    cuentaAhorro = new CuentaAhorro(numeroCuentaAhorro, 0);
+                    cuentaAhorro = new CuentaAhorro( 0, numeroCuentaAhorro, null);
                     nuevoCliente.setCuentaAhorro(cuentaAhorro); // * Agregado
                 }
                 case 3 -> {
@@ -184,7 +180,7 @@ public class Main {
                         opcion = scanner.nextLine();
                     } while (opcion.length() != 9 || !opcion.chars().allMatch(Character::isDigit));
                     numeroCuentaCredito = Integer.parseInt(opcion);
-                    cuentaCredito = new CuentaCredito(numeroCuentaCredito, 0);
+                    cuentaCredito = new CuentaCredito(0, numeroCuentaCredito, null);
                     nuevoCliente.setCuentaCredito(cuentaCredito); // * Agregadoo
                 }
                 case 4 -> {
@@ -195,14 +191,13 @@ public class Main {
                     System.out.println("Opcion invalida. Intente nuevamente.");
             }
 
-            // * Pregunta para continuar registrando cuentas
             String continuar;
             do {
             System.out.println("\n¿Desea registrar otro tipo de cuenta? (s/n)");
             continuar = scanner.nextLine().trim().toLowerCase();
             
             if (!continuar.equals("s") && !continuar.equals("n")) {
-                System.out.println("Entrada inválida. Por favor ingrese 's' para SÍ o 'n' para NO");   
+                System.out.println("\nEntrada inválida. Por favor ingrese 's' para SÍ o 'n' para NO");   
             }
             } while (!continuar.equals("s") && !continuar.equals("n"));
             
@@ -211,7 +206,6 @@ public class Main {
             }
         }
 
-        // * Agregar cliente a la lista solo después de registrar al menos una cuenta
         if (nuevoCliente.getCuentaCorriente() != null || nuevoCliente.getCuentaAhorro() != null || nuevoCliente.getCuentaCredito() != null) {
             clientes.add(nuevoCliente);
             System.out.println("\nCliente registrado exitosamente con sus cuentas.");
@@ -401,8 +395,8 @@ public class Main {
 
     private void consultarSaldo() {
         System.out.println("Por favor ingrese su RUT:");
-        String rut = scanner.nextLine();
-        Cliente cliente = buscarClientePorRut(rut);
+        String rutCliente = scanner.nextLine();
+        Cliente cliente = buscarClientePorRut(rutCliente);
 
         if (cliente != null) {
             System.out.println("--------------------------------");
@@ -446,9 +440,9 @@ public class Main {
         }
     }
 
-    private Cliente buscarClientePorRut(String rut) {
+    private Cliente buscarClientePorRut(String rutCliente) {
         for (Cliente c : clientes) {
-            if (c.getRut().equalsIgnoreCase(rut)) {
+            if (c.getRut().equalsIgnoreCase(rutCliente)) {
                 return c;
             }
         }
@@ -469,9 +463,9 @@ public class Main {
         }
     }
 
-    private boolean verificarRut(String rut) {
+    private boolean verificarRut(String rutCliente) {
         for (Cliente cliente : clientes) {
-            if (cliente.getRut().equalsIgnoreCase(rut)) {
+            if (cliente.getRut().equalsIgnoreCase(rutCliente)) {
                 return true;
             }
         }
